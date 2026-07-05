@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "echoes-of-longing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", ".lyrics-sources/Echoes-of-Longing", "--", "--port", "5199", "--strictPort"],
+      "port": 5199
+    }
+  ]
+}

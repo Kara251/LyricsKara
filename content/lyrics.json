@@ -1,0 +1,28 @@
+[
+  {
+    "slug": "Echoes-of-Longing",
+    "title": {
+      "tc": "憧れの残響",
+      "sc": "憧れの残响",
+      "en": "Echoes of Longing",
+      "ja": "憧れの残響"
+    },
+    "subtitle": {
+      "tc": "Blue Archive Ex. Decagrammaton ED",
+      "sc": "Blue Archive Ex. Decagrammaton ED",
+      "en": "Blue Archive Ex. Decagrammaton ED",
+      "ja": "Blue Archive Ex. Decagrammaton ED"
+    },
+    "artist": "Mitsukiyo x 夕野ヨシミ (IOSYS) x DAZBEE",
+    "duration": "4:28",
+    "language": "JP / ZH",
+    "status": "scaffold",
+    "route": "/Echoes-of-Longing/",
+    "sourceLabel": "Kara251/Echoes-of-Longing",
+    "sourceRepo": "https://github.com/Kara251/Echoes-of-Longing.git",
+    "branch": "main",
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
+    "outputDir": "dist"
+  }
+]

@@ -1,0 +1,7 @@
+# LyricsKara
+
+LyricsKara is the Kara251 lyrics page index at https://lyrics.kara251.com/.
+
+The first registered route is:
+
+- https://lyrics.kara251.com/Echoes-of-Longing/

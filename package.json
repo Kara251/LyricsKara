@@ -5,7 +5,7 @@
   "description": "Static lyrics index for lyrics.kara251.com, deployed with Cloudflare Pages.",
   "type": "module",
   "scripts": {
-    "check": "node --check scripts/build.mjs && node --check src/site.js",
+    "check": "node --check scripts/build.mjs",
     "build": "node ./scripts/build.mjs",
     "build:index": "LYRICSKARA_SKIP_LYRICS_BUILD=1 node ./scripts/build.mjs",
     "dev": "npm run build && python3 -m http.server 4174 -d dist",

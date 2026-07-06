@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", ".lyrics-sources/Echoes-of-Longing", "--", "--port", "5199", "--strictPort"],
       "port": 5199
+    },
+    {
+      "name": "lyricskara-home",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4175", "-d", "dist"],
+      "port": 4175
     }
   ]
 }

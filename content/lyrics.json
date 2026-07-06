@@ -5,7 +5,8 @@
       "tc": "憧れの残響",
       "sc": "憧れの残响",
       "en": "Echoes of Longing",
-      "ja": "憧れの残響"
+      "ja": "憧れの残響",
+      "kr": "동경의 잔향"
     },
     "subtitle": {
       "tc": "Blue Archive Ex. Decagrammaton ED",
@@ -14,9 +15,14 @@
       "ja": "Blue Archive Ex. Decagrammaton ED"
     },
     "artist": "Mitsukiyo x Yuno Yoshimi (IOSYS) x DAZBEE",
-    "duration": "4:28",
-    "language": "JP / ZH",
-    "status": "scaffold",
+    "staff": "Mitsukiyo · Yuno Yoshimi · DAZBEE",
+    "duration": "4:29",
+    "language": "JP / EN / ZH",
+    "status": "live",
+    "accent": "#454272",
+    "accentBright": "#565390",
+    "spark": "#f4ecc8",
+    "cover": "/Echoes-of-Longing/assets/img/cover.jpg",
     "route": "/Echoes-of-Longing/",
     "sourceLabel": "Kara251/Echoes-of-Longing",
     "sourceRepo": "https://github.com/Kara251/Echoes-of-Longing.git",

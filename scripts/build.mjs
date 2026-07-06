@@ -150,13 +150,55 @@ function clientCatalog(entries) {
     title: entry.title,
     subtitle: entry.subtitle,
     artist: entry.artist,
+    staff: entry.staff,
     duration: entry.duration,
     language: entry.language,
     status: entry.status,
+    accent: entry.accent,
+    cover: entry.cover,
     route: entry.route,
     sourceLabel: entry.sourceLabel,
     sourceRepo: entry.sourceRepo.replace(/\.git$/, "")
   }));
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[ch]);
+}
+
+/** 残响画廊：每首歌渲染为一条通栏色带（构建期静态注入，首页零 JS） */
+function renderBands(entries) {
+  return entries.map((entry) => {
+    const title = entry.title ?? {};
+    const alt = [title.en, title.kr].filter(Boolean).join(" · ");
+    const style = [
+      `--band:${entry.accent ?? "#26263a"}`,
+      `--band-bright:${entry.accentBright ?? entry.accent ?? "#33334c"}`,
+      `--spark:${entry.spark ?? "#f4ecc8"}`
+    ].join(";");
+    const cover = entry.cover
+      ? `<span class="band-cover" style="background-image:url('${escapeHtml(entry.cover)}')" aria-hidden="true"></span>`
+      : "";
+
+    return `<a class="band band-work" href="${escapeHtml(entry.route)}" style="${style}">
+      ${cover}
+      <span class="band-body">
+        <span class="band-title">${escapeHtml(title.ja ?? title.en ?? entry.slug)}</span>
+        <span class="band-alt">${escapeHtml(alt)}</span>
+        <span class="band-staff">${escapeHtml(entry.staff ?? entry.artist ?? "")}</span>
+      </span>
+      <span class="band-cta">
+        <span class="band-enter">ENTER THE STAGE <span class="arrow">→</span></span>
+        <span class="band-length">${escapeHtml(entry.duration ?? "")}</span>
+      </span>
+    </a>`;
+  }).join("\n");
 }
 
 async function replacePlaceholders(filePath, entries) {
@@ -170,7 +212,8 @@ async function replacePlaceholders(filePath, entries) {
   const replaced = source
     .replaceAll("__BUILD_VERSION__", buildVersion)
     .replaceAll("__BUILD_DATE__", buildDate)
-    .replaceAll("__LYRICS_CATALOG__", JSON.stringify(clientCatalog(entries)));
+    .replaceAll("__LYRICS_CATALOG__", JSON.stringify(clientCatalog(entries)))
+    .replaceAll("__LYRICS_BANDS__", renderBands(entries));
 
   await fs.writeFile(filePath, replaced);
 }

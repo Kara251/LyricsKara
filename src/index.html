@@ -1,84 +1,44 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="lyrics-kara-build" content="__BUILD_VERSION__">
-    <title>LyricsKara - Kara251 Lyrics Index</title>
-    <meta name="description" content="LyricsKara collects Kara251 lyrics pages at lyrics.kara251.com.">
+    <title>LyricsKara — Web Lyric Performances</title>
+    <meta name="description" content="LyricsKara — web lyric performances by Kara251. One stage per song, at lyrics.kara251.com.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Kara251">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#050508">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="LyricsKara">
-    <meta property="og:title" content="LyricsKara - Kara251 Lyrics Index">
-    <meta property="og:description" content="Kara251 lyrics pages and web lyric experiments.">
+    <meta property="og:title" content="LyricsKara — Web Lyric Performances">
+    <meta property="og:description" content="Web lyric performances by Kara251. One stage per song.">
     <meta property="og:url" content="https://lyrics.kara251.com/">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="LyricsKara - Kara251 Lyrics Index">
-    <meta name="twitter:description" content="Kara251 lyrics pages and web lyric experiments.">
+    <meta name="twitter:title" content="LyricsKara — Web Lyric Performances">
+    <meta name="twitter:description" content="Web lyric performances by Kara251. One stage per song.">
     <link rel="canonical" href="https://lyrics.kara251.com/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='36' fill='none' stroke='%23f4ecc8' stroke-width='7'/><circle cx='50' cy='50' r='7' fill='%23f4ecc8'/></svg>">
     <link rel="stylesheet" href="/site.css?v=__BUILD_VERSION__">
   </head>
   <body>
-    <div class="language-control">
-      <label class="sr-only" for="lang-select">Language</label>
-      <select id="lang-select" class="lang-select" aria-label="Language"></select>
-    </div>
+    <header class="site-head">
+      <a class="wordmark" href="/">LyricsKara</a>
+      <span class="route">lyrics.kara251.com</span>
+    </header>
 
-    <div class="frame-lines" aria-hidden="true">
-      <span class="frame-line frame-line-top"></span>
-      <span class="frame-line frame-line-right"></span>
-      <span class="frame-line frame-line-bottom"></span>
-      <span class="frame-line frame-line-left"></span>
-    </div>
-
-    <main class="site-main" aria-labelledby="hero-title">
-      <div class="hero-rail hero-rail-left" aria-hidden="true">lyrics.kara251.com</div>
-      <div class="hero-rail hero-rail-right" aria-hidden="true">LYRICSKARA</div>
-
-      <section class="hero-shell">
-        <div class="rule-double"></div>
-        <div class="hero-header">
-          <span class="hero-kicker" data-copy="heroKicker">LYRICS INDEX</span>
-          <span class="hero-route">lyrics.kara251.com</span>
-        </div>
-
-        <h1 class="hero-title" id="hero-title">
-          <span>LyricsKara</span>
-          <span data-copy="heroTitleLine">歌詞頁索引</span>
-        </h1>
-
-        <p class="hero-note" data-copy="heroNote">
-          Kara251 lyrics pages, collected as independent routes.
-        </p>
-
-        <div class="hero-actions">
-          <a class="action action-primary" href="#catalog" data-copy="primaryAction">查看歌詞頁</a>
-          <a class="action action-secondary" href="https://www.kara251.com/" data-copy="homeAction">返回主頁</a>
-        </div>
-
-        <div class="hero-meta" aria-label="Site metadata">
-          <span data-copy="metaDomain">DOMAIN: lyrics.kara251.com</span>
-          <span data-copy="metaBuild">BUILD: __BUILD_DATE__</span>
-        </div>
-        <div class="rule-double"></div>
-      </section>
-
-      <section class="catalog-shell" id="catalog" aria-labelledby="catalog-title">
-        <div class="catalog-heading">
-          <div>
-            <p class="section-kicker" data-copy="catalogKicker">CATALOG</p>
-            <h2 id="catalog-title" data-copy="catalogTitle">已接入的歌詞頁</h2>
-          </div>
-          <p class="section-note" data-copy="catalogNote">每首歌保持自己的倉庫與演出方式，LyricsKara 只負責入口與路由。</p>
-        </div>
-
-        <div class="rule"></div>
-        <div class="lyric-list" id="lyric-list"></div>
-      </section>
+    <main class="stage-list" aria-label="Lyric performances">
+      __LYRICS_BANDS__
+      <div class="band band-coming" aria-hidden="true">
+        <p class="coming-line">下一场演出，尚未开幕</p>
+        <p class="coming-sub">NEXT STAGE — NOT YET OPEN</p>
+      </div>
+      <div class="band band-void" aria-hidden="true"><span>＊</span></div>
     </main>
 
-    <script src="/site.js?v=__BUILD_VERSION__" defer></script>
+    <footer class="site-foot">
+      <a href="https://www.kara251.com/">KARA251 FAMILY</a>
+      <span>BUILD __BUILD_DATE__</span>
+    </footer>
   </body>
 </html>

@@ -9,10 +9,9 @@ const rootDir = path.resolve(__dirname, "..");
 const srcDir = path.join(rootDir, "src");
 const contentFile = path.join(rootDir, "content", "lyrics.json");
 const distDir = path.join(rootDir, "dist");
-const sourceCacheDir = path.join(rootDir, ".lyrics-sources");
+const stagesDir = path.join(rootDir, "stages");
 const canonicalOrigin = "https://lyrics.kara251.com";
 const skipLyricsBuild = process.env.LYRICSKARA_SKIP_LYRICS_BUILD === "1";
-const refreshSources = process.env.LYRICSKARA_REFRESH_SOURCES === "1";
 const buildDate = new Date().toISOString();
 const buildVersion = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -39,24 +38,6 @@ function assertSafeSlug(slug) {
   }
 }
 
-function assertTrustedRepo(repoUrl) {
-  let parsed;
-
-  try {
-    parsed = new URL(repoUrl);
-  } catch {
-    throw new Error(`Invalid source repository URL: ${repoUrl}`);
-  }
-
-  if (parsed.protocol !== "https:" || parsed.hostname !== "github.com") {
-    throw new Error(`Only HTTPS GitHub repositories are allowed: ${repoUrl}`);
-  }
-
-  if (!parsed.pathname.startsWith("/Kara251/")) {
-    throw new Error(`Lyrics source repositories must live under Kara251: ${repoUrl}`);
-  }
-}
-
 function splitCommand(command) {
   const parts = command.trim().split(/\s+/);
 
@@ -69,15 +50,19 @@ function splitCommand(command) {
 
 function run(command, args, cwd) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
-      cwd,
-      stdio: "inherit",
-      shell: false,
-      env: {
-        ...process.env,
-        CI: process.env.CI ?? "1"
-      }
-    });
+    const isWindows = process.platform === "win32";
+    const child = spawn(
+      isWindows ? "cmd.exe" : command,
+      isWindows ? ["/d", "/s", "/c", command, ...args] : args,
+      {
+        cwd,
+        stdio: "inherit",
+        shell: false,
+        env: {
+          ...process.env,
+          CI: process.env.CI ?? "1"
+        }
+      });
 
     child.on("error", reject);
     child.on("close", (code) => {
@@ -130,7 +115,6 @@ async function readLyricsEntries() {
 
   for (const entry of entries) {
     assertSafeSlug(entry.slug);
-    assertTrustedRepo(entry.sourceRepo);
 
     if (!entry.route || entry.route !== `/${entry.slug}/`) {
       throw new Error(`Route for ${entry.slug} must be /${entry.slug}/`);
@@ -138,6 +122,10 @@ async function readLyricsEntries() {
 
     if (entry.outputDir && (path.isAbsolute(entry.outputDir) || entry.outputDir.includes(".."))) {
       throw new Error(`Unsafe outputDir for ${entry.slug}: ${entry.outputDir}`);
+    }
+
+    if (entry.sourceDir && (path.isAbsolute(entry.sourceDir) || entry.sourceDir.includes(".."))) {
+      throw new Error(`Unsafe sourceDir for ${entry.slug}: ${entry.sourceDir}`);
     }
   }
 
@@ -157,8 +145,7 @@ function clientCatalog(entries) {
     accent: entry.accent,
     cover: entry.cover,
     route: entry.route,
-    sourceLabel: entry.sourceLabel,
-    sourceRepo: entry.sourceRepo.replace(/\.git$/, "")
+    sourceLabel: entry.sourceLabel
   }));
 }
 
@@ -241,25 +228,15 @@ async function replaceAllPlaceholders(entries) {
   await Promise.all(files.map((file) => replacePlaceholders(file, entries)));
 }
 
-async function ensureSource(entry) {
-  await fs.mkdir(sourceCacheDir, { recursive: true });
-  const targetDir = path.join(sourceCacheDir, entry.slug);
-  assertInside(sourceCacheDir, targetDir, entry.slug);
+async function resolveSourceDir(entry) {
+  const sourceDir = path.resolve(rootDir, entry.sourceDir ?? path.join("stages", entry.slug));
+  assertInside(stagesDir, sourceDir, entry.slug);
 
-  const hasGitCheckout = await pathExists(path.join(targetDir, ".git"));
-
-  if (!hasGitCheckout) {
-    await fs.rm(targetDir, { recursive: true, force: true });
-    await run("git", ["clone", "--depth", "1", "--branch", entry.branch ?? "main", entry.sourceRepo, targetDir], rootDir);
-    return targetDir;
+  if (!(await pathExists(path.join(sourceDir, "package.json")))) {
+    throw new Error(`Missing stage source for ${entry.slug}: ${sourceDir}`);
   }
 
-  if (refreshSources) {
-    await run("git", ["fetch", "--depth", "1", "origin", entry.branch ?? "main"], targetDir);
-    await run("git", ["checkout", "FETCH_HEAD"], targetDir);
-  }
-
-  return targetDir;
+  return sourceDir;
 }
 
 async function buildLyricsRoute(entry) {
@@ -268,7 +245,7 @@ async function buildLyricsRoute(entry) {
     return;
   }
 
-  const sourceDir = await ensureSource(entry);
+  const sourceDir = await resolveSourceDir(entry);
   const [installCommand, installArgs] = splitCommand(entry.installCommand ?? "npm ci");
   const [buildCommand, buildArgs] = splitCommand(entry.buildCommand ?? "npm run build");
 

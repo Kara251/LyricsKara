@@ -19,12 +19,10 @@ npm run dev
 npm run deploy
 ```
 
-`npm run build` reads `content/lyrics.json`, clones each public Kara251 lyrics repository into `.lyrics-sources/`, builds it, and copies the generated output into `dist/<slug>/`.
-
-Set `LYRICSKARA_REFRESH_SOURCES=1` when you want to force an existing local source checkout to refresh before building.
+`npm run build` reads `content/lyrics.json`, builds each stage project under `stages/<slug>/`, and copies the generated output into `dist/<slug>/`.
 
 ## First Route
 
-`/Echoes-of-Longing/` is sourced from `https://github.com/Kara251/Echoes-of-Longing`.
+`/Echoes-of-Longing/` is built from `stages/Echoes-of-Longing/`.
 
-The homepage only indexes and routes to the lyrics page. The lyric page design remains inside its own repository.
+The homepage only indexes and routes to the lyrics pages. Each stage's design lives in its own directory.

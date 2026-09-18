@@ -24,9 +24,6 @@
     "spark": "#f4ecc8",
     "cover": "/Echoes-of-Longing/assets/img/cover.jpg",
     "route": "/Echoes-of-Longing/",
-    "sourceLabel": "Kara251/Echoes-of-Longing",
-    "sourceRepo": "https://github.com/Kara251/Echoes-of-Longing.git",
-    "branch": "main",
     "installCommand": "npm ci",
     "buildCommand": "npm run build",
     "outputDir": "dist"

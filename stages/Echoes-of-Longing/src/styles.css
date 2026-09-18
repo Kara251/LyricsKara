@@ -1,0 +1,433 @@
+:root {
+  /* 暮色调色板（取自专辑封面：薄暮紫 / 深靛 / 月白 / 光环淡金） */
+  --c-deep: #101024;
+  --c-dusk: #8b8fc7;
+  --c-mist: #b9bce0;
+  --c-ink: #eef0ff;
+  --c-halo: #f4ecc8;
+
+  --font-jp: 'Shippori Mincho', 'Noto Serif SC', serif;
+  --font-zh: 'Noto Serif SC', 'Shippori Mincho', serif;
+  --font-kr: 'Nanum Myeongjo', serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--c-deep);
+  color: var(--c-ink);
+  overflow: hidden;
+  font-family: var(--font-zh);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app { position: fixed; inset: 0; }
+
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* ---- 文字层 ---- */
+#type-layer {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+#ghosts, #lines { position: absolute; inset: 0; }
+
+.lyric-line {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+}
+.lyric-line .jp {
+  font-family: var(--font-jp);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
+  letter-spacing: 0.14em;
+  color: var(--c-ink);
+  text-shadow: 0 0 24px rgba(139, 143, 199, 0.45);
+}
+.lyric-line .jp .ch { display: inline-block; will-change: transform, opacity, filter; }
+.lyric-line .zh {
+  margin-top: 1.1em;
+  font-family: var(--font-zh);
+  font-size: clamp(0.8rem, 1.6vw, 1.15rem);
+  letter-spacing: 0.32em;
+  color: var(--c-mist);
+  opacity: 0.72;
+}
+
+/* 残响层：消逝的歌词留下的回声 */
+#ghosts .lyric-line { filter: blur(1px); }
+
+/* 竖排变体（cut 可自由取用） */
+.lyric-line.vertical {
+  writing-mode: vertical-rl;
+  white-space: normal;
+}
+
+/* 主歌一文字演出：左 1/3、竖排逐字淡入的诗列 */
+.lyric-verse { position: absolute; inset: 0; pointer-events: none; }
+.lyric-phrase {
+  position: absolute;
+  writing-mode: vertical-rl;      /* 竖排：字从上往下排 */
+  text-orientation: upright;
+  font-family: var(--font-jp);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3.3vw, 2.8rem);
+  letter-spacing: 0.14em;         /* 竖排下即字间纵向间距 */
+  color: var(--c-ink);
+  text-shadow: 0 0 22px rgba(150, 195, 240, 0.5), 0 0 4px rgba(230, 240, 255, 0.35);
+}
+.lyric-phrase .ch { display: inline-block; opacity: 0; will-change: transform, opacity; }
+
+/* 右下角歌词中文翻译字幕（进度条右侧，常驻交叉淡化） */
+#subtitle {
+  position: absolute;
+  right: 3.4vw;
+  bottom: 3.4vh;
+  max-width: 44vw;
+  z-index: 24;
+  text-align: right;
+  font-family: var(--font-zh);
+  font-size: clamp(0.82rem, 1.5vw, 1.1rem);
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  color: var(--c-mist);
+  text-shadow: 0 1px 12px rgba(8, 8, 20, 0.7);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+#subtitle[data-show="1"] { opacity: 0.85; transform: translateY(0); }
+
+/* ---- 前奏 Staff 字幕（2D 不可操控）---- */
+.intro-credits {
+  position: absolute;
+  left: 7vw;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  pointer-events: none;
+}
+.credit-batch {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  white-space: nowrap;
+}
+.credit-role {
+  font-family: var(--font-sans, 'Helvetica Neue', 'Hiragino Sans', sans-serif);
+  font-size: 0.74rem;
+  letter-spacing: 0.26em;
+  color: rgba(190, 220, 245, 0.85);
+  margin-bottom: 0.35rem;
+}
+.credit-name {
+  font-family: var(--font-sans, 'Helvetica Neue', 'Hiragino Sans', sans-serif);
+  font-size: 1.14rem;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  -webkit-text-stroke: 0.8px rgba(150, 200, 240, 0.8);
+  text-shadow: 0 0 12px rgba(160, 205, 245, 0.35);
+  margin-top: 0.15rem;
+}
+
+/* ---- 电影层 ---- */
+#cine-layer { position: absolute; inset: 0; pointer-events: none; }
+#cine-layer .bar {
+  position: absolute; left: 0; right: 0; height: 0;
+  background: #000;
+  transition: height 1.2s cubic-bezier(0.6, 0, 0.2, 1);
+}
+#cine-layer .bar.top { top: 0; }
+#cine-layer .bar.bottom { bottom: 0; }
+#veil {
+  position: absolute; inset: 0;
+  background: #000;
+  opacity: 1;
+  pointer-events: none;
+}
+#flash {
+  position: absolute; inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- 开场演出 ---- */
+#opening {
+  position: absolute; inset: 0;
+  z-index: 30;
+  overflow: hidden;
+}
+#opening-dust {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 34;
+  pointer-events: none;
+}
+
+#op-line {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1.5px; height: 22vh;
+  transform: translate(-50%, -50%) scaleY(0);
+  background: var(--c-mist);
+  box-shadow: 0 0 14px rgba(185, 188, 224, 0.85);
+}
+
+/* 抽屉：以中线为内缘裁切，内容自线段后拉出；
+   拉出完成后撤下裁切（窄屏下内容可宽于半屏，光环在内容之下允许重叠） */
+.op-drawer {
+  position: absolute;
+  top: 0; bottom: 0;
+  overflow: hidden;
+}
+.op-drawer.left { left: 0; right: 50%; }
+.op-drawer.right { left: 50%; right: 0; }
+#opening.drawers-open .op-drawer { overflow: visible; }
+
+#op-title {
+  position: absolute;
+  width: 46vw;
+  opacity: 0;
+}
+#op-title .lang {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  opacity: 0;
+  white-space: nowrap;
+  font-size: clamp(1.5rem, 3.4vw, 3rem);
+  letter-spacing: 0.2em;
+  color: var(--c-ink);
+  text-shadow: 0 0 26px rgba(139, 143, 199, 0.5);
+}
+#op-title .jp { font-family: var(--font-jp); }
+#op-title .en { font-family: var(--font-jp); font-style: italic; letter-spacing: 0.12em; }
+#op-title .zh { font-family: var(--font-zh); }
+#op-title .kr { font-family: var(--font-kr); letter-spacing: 0.3em; }
+
+#op-cover {
+  position: absolute;
+  overflow: hidden;
+  box-shadow: 0 6px 44px rgba(6, 6, 16, 0.6);
+}
+#op-cover img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#op-staff {
+  position: absolute;
+}
+.op-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2em;
+  margin: 1.1em 0;
+}
+.op-role {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--c-dusk);
+  min-width: 4.5em;
+}
+.op-name {
+  font-family: var(--font-jp);
+  font-size: 1.08rem;
+  letter-spacing: 0.12em;
+  color: var(--c-ink);
+  white-space: nowrap;
+}
+.op-note {
+  margin-top: 2em;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: var(--c-dusk);
+  opacity: 0.6;
+}
+#op-back {
+  display: inline-block;
+  margin-top: 1.6em;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--c-mist);
+  text-decoration: none;
+  border: 1px solid rgba(185, 188, 224, 0.35);
+  border-radius: 2px;
+  white-space: nowrap;
+}
+#op-back:hover {
+  color: var(--c-ink);
+  background: rgba(139, 143, 199, 0.16);
+}
+
+#op-tap {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 26vh);
+  transform: translateX(-50%);
+  font-family: var(--font-jp);
+  font-style: italic;
+  font-size: 0.8rem;
+  letter-spacing: 0.34em;
+  color: var(--c-mist);
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+#op-hit {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 54vmin; height: 54vmin;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: none; border: 0;
+  pointer-events: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+#op-hit.armed { pointer-events: auto; cursor: pointer; }
+
+#op-hint {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 26vh + 2.2rem);
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: var(--c-dusk);
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---- 生产播放器控制条 ---- */
+#player {
+  position: absolute;
+  left: 50%;
+  bottom: 3.5vh;
+  transform: translateX(-50%);
+  z-index: 26;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 16px;
+  background: rgba(13, 13, 31, 0.55);
+  border: 1px solid rgba(185, 188, 224, 0.18);
+  border-radius: 3px;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+#player[data-visible] { opacity: 1; pointer-events: auto; }
+#pl-toggle {
+  background: none;
+  border: 0;
+  color: var(--c-ink);
+  font-size: 0.8rem;
+  width: 1.6em;
+  cursor: pointer;
+  padding: 0;
+}
+#pl-track {
+  position: relative;
+  width: clamp(180px, 38vw, 440px);
+  height: 3px;
+  background: rgba(185, 188, 224, 0.25);
+  cursor: pointer;
+  /* 扩大命中区 */
+  background-clip: content-box;
+  padding: 8px 0;
+}
+#pl-fill {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  height: 3px;
+  width: 0;
+  background: var(--c-halo);
+}
+#pl-time {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--c-mist);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 窄屏：右列允许换行收窄，避免宽于右半屏 */
+@media (max-width: 780px) {
+  #op-staff { max-width: 42vw; }
+  .op-name { white-space: normal; }
+}
+
+/* ---- 横屏引导（移动端竖屏遮罩） ---- */
+#rotate-gate {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(10, 10, 22, 0.97);
+  z-index: 50;
+}
+#rotate-gate[hidden] { display: none; }
+.rotate-inner { text-align: center; padding: 2rem; }
+.rotate-phone {
+  display: block;
+  width: 30px; height: 52px;
+  margin: 0 auto 1.8rem;
+  border: 2px solid var(--c-mist);
+  border-radius: 6px;
+  animation: rotate-phone 3s ease-in-out infinite;
+}
+@keyframes rotate-phone {
+  0% { transform: rotate(0deg); opacity: 0; }
+  18% { transform: rotate(0deg); opacity: 0.9; }
+  30% { transform: rotate(0deg); }
+  62% { transform: rotate(90deg); }
+  85% { transform: rotate(90deg); opacity: 0.9; }
+  100% { transform: rotate(90deg); opacity: 0; }
+}
+.rotate-title {
+  font-family: var(--font-zh);
+  font-size: 1.05rem;
+  letter-spacing: 0.42em;
+  color: var(--c-ink);
+}
+.rotate-sub {
+  margin-top: 0.8rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  color: var(--c-mist);
+  opacity: 0.65;
+}
+
+/* ---- 创作 HUD ---- */
+#hud {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  z-index: 40;
+  padding: 10px 14px 12px;
+  background: linear-gradient(transparent, rgba(6, 6, 14, 0.85));
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 12px;
+  color: var(--c-mist);
+  display: flex; flex-direction: column; gap: 6px;
+}
+#hud[hidden] { display: none; }
+#hud .row { display: flex; align-items: center; gap: 14px; }
+#hud input[type='range'] { flex: 1; accent-color: var(--c-dusk); height: 4px; }
+#hud .cuts { color: var(--c-halo); }
+#hud .keys { opacity: 0.55; }
